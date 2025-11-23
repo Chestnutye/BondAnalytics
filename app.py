@@ -201,19 +201,153 @@ with tabs[2]:
                     st.subheader("Results")
                     st.dataframe(results_df)
                     
+                    # Sort by Maturity Date for better visualization
+                    if 'Maturity Date' in results_df.columns:
+                        results_df_sorted = results_df.sort_values('Maturity Date').reset_index(drop=True)
+                    else:
+                        results_df_sorted = results_df
+                    
+                    # Prepare labels (use Description if available, otherwise use index)
+                    if 'Description' in results_df_sorted.columns:
+                        labels = results_df_sorted['Description'].astype(str)
+                    else:
+                        labels = results_df_sorted.index.astype(str)
+                    
                     # Visualizations
-                    if 'Calculated YTM' in results_df.columns:
-                         # Plot Yield Curve (YTM vs Maturity Date)
-                         fig_batch = go.Figure()
-                         fig_batch.add_trace(go.Scatter(x=results_df['Maturity Date'], y=results_df['Calculated YTM']*100, mode='markers', name='Yield'))
-                         fig_batch.update_layout(title="Yield vs Maturity", xaxis_title="Maturity Date", yaxis_title="Yield (%)")
-                         st.plotly_chart(fig_batch, use_container_width=True)
-                         
-                    if 'Macaulay Duration' in results_df.columns:
-                         fig_dur = go.Figure()
-                         fig_dur.add_trace(go.Scatter(x=results_df['Maturity Date'], y=results_df['Macaulay Duration'], mode='markers', name='Duration'))
-                         fig_dur.update_layout(title="Duration vs Maturity", xaxis_title="Maturity Date", yaxis_title="Duration (Years)")
-                         st.plotly_chart(fig_dur, use_container_width=True)
+                    st.subheader("📊 Visual Analysis")
+                    
+                    # Create columns for better layout
+                    viz_col1, viz_col2 = st.columns(2)
+                    
+                    with viz_col1:
+                        if 'Calculated YTM' in results_df_sorted.columns:
+                            # Plot Yield Curve (YTM vs Maturity Date)
+                            fig_yield = go.Figure()
+                            fig_yield.add_trace(go.Scatter(
+                                x=results_df_sorted['Maturity Date'], 
+                                y=results_df_sorted['Calculated YTM']*100, 
+                                mode='lines+markers+text',
+                                name='Yield',
+                                text=[f"{y:.2f}%" for y in results_df_sorted['Calculated YTM']*100],
+                                textposition="top center",
+                                textfont=dict(size=9),
+                                marker=dict(size=8),
+                                line=dict(width=2)
+                            ))
+                            fig_yield.update_layout(
+                                title="Yield vs Maturity",
+                                xaxis_title="Maturity Date",
+                                yaxis_title="Yield (%)",
+                                hovermode="x unified",
+                                showlegend=True,
+                                height=400,
+                                xaxis=dict(showgrid=True, gridwidth=1, gridcolor='LightGray'),
+                                yaxis=dict(showgrid=True, gridwidth=1, gridcolor='LightGray')
+                            )
+                            st.plotly_chart(fig_yield, use_container_width=True)
+                        
+                        if 'Macaulay Duration' in results_df_sorted.columns:
+                            fig_dur = go.Figure()
+                            fig_dur.add_trace(go.Scatter(
+                                x=results_df_sorted['Maturity Date'], 
+                                y=results_df_sorted['Macaulay Duration'], 
+                                mode='lines+markers+text',
+                                name='Duration',
+                                text=[f"{d:.2f}" for d in results_df_sorted['Macaulay Duration']],
+                                textposition="top center",
+                                textfont=dict(size=9),
+                                marker=dict(size=8, color='orange'),
+                                line=dict(width=2, color='orange')
+                            ))
+                            fig_dur.update_layout(
+                                title="Duration vs Maturity",
+                                xaxis_title="Maturity Date",
+                                yaxis_title="Duration (Years)",
+                                hovermode="x unified",
+                                showlegend=True,
+                                height=400,
+                                xaxis=dict(showgrid=True, gridwidth=1, gridcolor='LightGray'),
+                                yaxis=dict(showgrid=True, gridwidth=1, gridcolor='LightGray')
+                            )
+                            st.plotly_chart(fig_dur, use_container_width=True)
+                    
+                    with viz_col2:
+                        if 'Calculated Price' in results_df_sorted.columns:
+                            # Plot Price vs Maturity
+                            fig_price = go.Figure()
+                            fig_price.add_trace(go.Scatter(
+                                x=results_df_sorted['Maturity Date'], 
+                                y=results_df_sorted['Calculated Price'], 
+                                mode='lines+markers+text',
+                                name='Price',
+                                text=[f"{p:.2f}" for p in results_df_sorted['Calculated Price']],
+                                textposition="top center",
+                                textfont=dict(size=9),
+                                marker=dict(size=8, color='green'),
+                                line=dict(width=2, color='green')
+                            ))
+                            fig_price.update_layout(
+                                title="Price vs Maturity",
+                                xaxis_title="Maturity Date",
+                                yaxis_title="Price",
+                                hovermode="x unified",
+                                showlegend=True,
+                                height=400,
+                                xaxis=dict(showgrid=True, gridwidth=1, gridcolor='LightGray'),
+                                yaxis=dict(showgrid=True, gridwidth=1, gridcolor='LightGray')
+                            )
+                            st.plotly_chart(fig_price, use_container_width=True)
+                        elif 'Market Price' in results_df_sorted.columns:
+                            # Use Market Price if Calculated Price not available
+                            fig_price = go.Figure()
+                            fig_price.add_trace(go.Scatter(
+                                x=results_df_sorted['Maturity Date'], 
+                                y=results_df_sorted['Market Price'], 
+                                mode='lines+markers+text',
+                                name='Price',
+                                text=[f"{p:.2f}" for p in results_df_sorted['Market Price']],
+                                textposition="top center",
+                                textfont=dict(size=9),
+                                marker=dict(size=8, color='green'),
+                                line=dict(width=2, color='green')
+                            ))
+                            fig_price.update_layout(
+                                title="Price vs Maturity",
+                                xaxis_title="Maturity Date",
+                                yaxis_title="Price",
+                                hovermode="x unified",
+                                showlegend=True,
+                                height=400,
+                                xaxis=dict(showgrid=True, gridwidth=1, gridcolor='LightGray'),
+                                yaxis=dict(showgrid=True, gridwidth=1, gridcolor='LightGray')
+                            )
+                            st.plotly_chart(fig_price, use_container_width=True)
+                        
+                        if 'Convexity' in results_df_sorted.columns:
+                            # Plot Convexity vs Maturity
+                            fig_conv = go.Figure()
+                            fig_conv.add_trace(go.Scatter(
+                                x=results_df_sorted['Maturity Date'], 
+                                y=results_df_sorted['Convexity'], 
+                                mode='lines+markers+text',
+                                name='Convexity',
+                                text=[f"{c:.2f}" for c in results_df_sorted['Convexity']],
+                                textposition="top center",
+                                textfont=dict(size=9),
+                                marker=dict(size=8, color='purple'),
+                                line=dict(width=2, color='purple')
+                            ))
+                            fig_conv.update_layout(
+                                title="Convexity vs Maturity",
+                                xaxis_title="Maturity Date",
+                                yaxis_title="Convexity",
+                                hovermode="x unified",
+                                showlegend=True,
+                                height=400,
+                                xaxis=dict(showgrid=True, gridwidth=1, gridcolor='LightGray'),
+                                yaxis=dict(showgrid=True, gridwidth=1, gridcolor='LightGray')
+                            )
+                            st.plotly_chart(fig_conv, use_container_width=True)
 
         except Exception as e:
             st.error(f"Error reading file: {e}")
