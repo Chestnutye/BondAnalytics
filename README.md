@@ -54,12 +54,10 @@ bond_analytics/
 │   ├── README.md               # 📖 Examples documentation
 │   ├── bond_analysis_template.xlsx       # Basic bond scenarios
 │   ├── corporate_bonds_example.xlsx      # Corporate bonds
-│   ├── government_bonds_example.xlsx     # Treasury securities
-│   └── term_structure_example.xlsx       # Yield curve data
+│   ├── term_structure_example.xlsx       # Yield curve data
 └── scripts/                    # 🛠️ Utility scripts
     ├── generate_test_excel.py            # Generate basic template
     ├── generate_corporate_bonds.py       # Generate corporate bonds
-    ├── generate_government_bonds.py      # Generate government bonds
     └── generate_term_structure.py        # Generate term structure data
 ```
 
