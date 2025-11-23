@@ -72,8 +72,8 @@ bond_analytics/
 
 1.  **Clone the repository**
     ```bash
-    git clone https://github.com/Chesterye/bond_analytics.git
-    cd bond_analytics
+    git clone https://github.com/Chesterye/BondAnalytics.git
+    cd BondAnalytics
     ```
 
 2.  **Install dependencies**
