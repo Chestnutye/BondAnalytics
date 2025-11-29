@@ -110,5 +110,3 @@ The cache will be automatically regenerated when you run the application again.
 
 Distributed under the MIT License. See `LICENSE` for more information.
 
----
-*Created for Financial Modeling Coursework.*
